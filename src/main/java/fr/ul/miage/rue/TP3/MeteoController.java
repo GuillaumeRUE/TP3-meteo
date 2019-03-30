@@ -4,13 +4,21 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.ResourceBundle;
+import java.util.Timer;
+import java.util.TimerTask;
 
+import fr.ul.miage.meteo.json.Example;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 public class MeteoController implements Initializable {
 
+	private int reload;
+	
 	@FXML
 	Label cityName;
 	
@@ -19,25 +27,46 @@ public class MeteoController implements Initializable {
 	
 	@FXML
 	Label lastReload;
+	
+	@FXML
+	ImageView image;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		// TODO Auto-generated method stub
-		
+		Timer timer = new Timer();
+		timer.scheduleAtFixedRate(new TimerTask() {
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				Platform.runLater(() -> getDatas());
+			}
+			
+		},0,2000);
+	}
+	
+	public void getDatas() {
+		MeteoClient cl = new MeteoClient();
+		Example res = cl.getWeatherByCityName();
+        if(res != null) {
+        	temperature.setText(String.valueOf(res.getMain().getTemp()-273.15f));
+        	image.setImage(new Image("https://openweathermap.org/img/w/"+ res.getWeather().get(0).getIcon() +".png"));
+        	setLastReload();
+        }
 	}
 	
 	public void setCityName(String text) {
 		cityName.setText(text);
 	}
 	
-	public void setTemperature (float temp) {
-		temperature.setText(String.valueOf(temp));
-	}
-	
 	public void setLastReload() {
 		Calendar date = Calendar.getInstance();
 		SimpleDateFormat s = new SimpleDateFormat("HH:mm:ss");
 		lastReload.setText(s.format(date.getTime()));
+	}
+	
+	public void setReload(int reload) {
+		this.reload = reload;
 	}
 	
 	

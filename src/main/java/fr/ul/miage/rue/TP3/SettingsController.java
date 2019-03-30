@@ -1,6 +1,8 @@
 package fr.ul.miage.rue.TP3;
 
 import java.io.IOException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 import fr.ul.miage.meteo.json.Example;
 import javafx.event.ActionEvent;
@@ -11,12 +13,16 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 public class SettingsController {
 	
 	String city;
 	float temperature;
+	String iconePath;
+	Image icone;
+	int reload;
 	
 	@FXML
 	Button validateButton;
@@ -30,23 +36,13 @@ public class SettingsController {
 	@FXML
 	public void onClickValideronClickValider(ActionEvent event) {
 		city = cityName.getText();
-		int reload = 0;
 		try {
 			reload = Integer.parseInt(reloadTime.getText());
 		} catch (NumberFormatException e) {
 			System.out.println("Veuillez entrer un temps de rafraichissement valide");
 		}
-		getDatas();
         openMeteoView(event);
 		
-	}
-	
-	public void getDatas() {
-		MeteoClient cl = new MeteoClient();
-		Example res = cl.getWeatherByCityName();
-        if(res != null) {
-        	temperature = res.getMain().getTemp()-273.15f;
-        }
 	}
 	
 	public void openMeteoView(ActionEvent event) {
@@ -55,8 +51,7 @@ public class SettingsController {
 			Parent root = (Parent)loader.load();
 			MeteoController meteo = loader.getController();
 			meteo.setCityName(city);
-			meteo.setTemperature(temperature);
-			meteo.setLastReload();
+			meteo.setReload(reload);
 			Stage meteoStage = new Stage();
 			meteoStage.setScene(new Scene(root));
 			meteoStage.show();
