@@ -73,7 +73,7 @@ public class MeteoController implements Initializable {
 	}
 	
 	public void getDatas() {
-		MeteoClient cl = new MeteoClient();
+		MeteoClient cl = new MeteoClient(cityName.getText());
 		Example res = cl.getWeatherByCityName();
         if(res != null) {
         	temperature.setText(String.format("%.1f", res.getMain().getTemp()-273.15f)+"°C");
