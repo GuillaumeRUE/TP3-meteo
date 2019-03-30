@@ -17,7 +17,7 @@ import javafx.scene.image.ImageView;
 
 public class MeteoController implements Initializable {
 
-	private int reload;
+	int refresh;
 	
 	@FXML
 	Label cityName;
@@ -33,16 +33,18 @@ public class MeteoController implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+	}
+	
+	public void SetDatas() {
 		Timer timer = new Timer();
 		timer.scheduleAtFixedRate(new TimerTask() {
 
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
 				Platform.runLater(() -> getDatas());
 			}
 			
-		},0,2000);
+		},0,refresh);
 	}
 	
 	public void getDatas() {
@@ -65,10 +67,8 @@ public class MeteoController implements Initializable {
 		lastReload.setText(s.format(date.getTime()));
 	}
 	
-	public void setReload(int reload) {
-		this.reload = reload;
+	public void setRefresh(int number) {
+		this.refresh = number;
 	}
-	
-	
 	
 }

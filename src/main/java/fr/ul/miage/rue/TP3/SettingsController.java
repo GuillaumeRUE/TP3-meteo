@@ -37,7 +37,7 @@ public class SettingsController {
 	public void onClickValideronClickValider(ActionEvent event) {
 		city = cityName.getText();
 		try {
-			reload = Integer.parseInt(reloadTime.getText());
+			reload = Integer.parseInt(reloadTime.getText())*1000;
 		} catch (NumberFormatException e) {
 			System.out.println("Veuillez entrer un temps de rafraichissement valide");
 		}
@@ -51,9 +51,10 @@ public class SettingsController {
 			Parent root = (Parent)loader.load();
 			MeteoController meteo = loader.getController();
 			meteo.setCityName(city);
-			meteo.setReload(reload);
+			meteo.setRefresh(reload);
+			meteo.SetDatas();
 			Stage meteoStage = new Stage();
-			meteoStage.setScene(new Scene(root));
+			meteoStage.setScene(new Scene(root));	
 			meteoStage.show();
 			((Node)(event.getSource())).getScene().getWindow().hide();
 		} catch(IOException e) {
