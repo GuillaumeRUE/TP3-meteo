@@ -1,10 +1,8 @@
 package fr.ul.miage.rue.TP3;
 
 import java.io.IOException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
-import fr.ul.miage.meteo.json.Example;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -23,6 +21,9 @@ public class SettingsController {
 	String iconePath;
 	Image icone;
 	int reload;
+	boolean alreadyOpen = false;
+	Stage settingsStage;
+	MeteoController meteo;
 	
 	@FXML
 	Button validateButton;
@@ -41,24 +42,60 @@ public class SettingsController {
 		} catch (NumberFormatException e) {
 			System.out.println("Veuillez entrer un temps de rafraichissement valide");
 		}
-        openMeteoView(event);
+		if(alreadyOpen) {
+			updateMeteoView(event);
+		} else {
+			alreadyOpen = true;
+			openMeteoView(event);
+		}
+        
 		
 	}
 	
 	public void openMeteoView(ActionEvent event) {
+		
+		settingsStage = (Stage) ((Node)(event.getSource())).getScene().getWindow();
+		
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("MeteoView.fxml"));
 			Parent root = (Parent)loader.load();
-			MeteoController meteo = loader.getController();
-			meteo.setCityName(city);
-			meteo.setRefresh(reload);
-			meteo.SetDatas();
+			meteo = loader.getController();
+			setMeteoAttributes();
+			meteo.setSettingsController(settingsStage);
 			Stage meteoStage = new Stage();
 			meteoStage.setScene(new Scene(root));	
 			meteoStage.show();
-			((Node)(event.getSource())).getScene().getWindow().hide();
+			
+			meteoStage.setOnCloseRequest(e -> {
+				Platform.exit();
+				System.exit(0);
+			});
+			showSettings(false);
 		} catch(IOException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	public void updateMeteoView(ActionEvent event) {
+		setMeteoAttributes();
+		showSettings(false);
+	}
+	
+	public void setMeteoAttributes() {
+		meteo.setCityName(city);
+		meteo.setRefresh(reload);
+		meteo.SetDatas();
+	}
+	
+	public void setAlreadyOpen(boolean res) {
+		alreadyOpen = res;
+	}
+	
+	public void showSettings(boolean res) {
+		if(!res) {
+			settingsStage.hide();
+		} else {
+			settingsStage.show();
 		}
 	}
 
