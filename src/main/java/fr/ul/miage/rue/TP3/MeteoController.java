@@ -73,6 +73,7 @@ public class MeteoController implements Initializable {
 	}
 	
 	public void getDatas() {
+		System.out.println(cityName);
 		MeteoClient cl = new MeteoClient(cityName.getText());
 		Example res = cl.getWeatherByCityName();
         if(res != null) {

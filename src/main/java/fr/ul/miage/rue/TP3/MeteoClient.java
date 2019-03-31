@@ -12,7 +12,7 @@ import fr.ul.miage.meteo.json.Example;
 
 public class MeteoClient {
 	
-	private static final Logger LOG = Logger.getLogger(App.class.getName());
+	private static final Logger LOG = Logger.getLogger(MeteoClient.class.getName());
 	
 	private static String WEBSERVICE="http://api.openweathermap.org/data/2.5/";
 	private String apiKey;
